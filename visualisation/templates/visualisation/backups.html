@@ -1,0 +1,41 @@
+        // Add each raster layer
+        rasterData.forEach(function(raster) {
+            // Create bounds for the image overlay
+            var bounds = L.latLngBounds([
+                [raster.bounds[1], raster.bounds[0]],
+                [raster.bounds[3], raster.bounds[2]]
+            ]);
+            
+            // Create image overlay using base64 data
+            var overlay = L.imageOverlay(raster.image_data, bounds, {
+                opacity: 0.7
+            });
+
+            // Add to layer control
+            var layerControl = L.control.layers(null, {
+                [raster.name]: overlay
+            }, {
+                collapsed: false
+            }).addTo(map);
+
+            // Add legend
+            var legend = L.control({position: 'bottomright'});
+            legend.onAdd = function (map) {
+                var div = L.DomUtil.create('div', 'legend');
+                div.innerHTML = `
+                    <h4>${raster.name}</h4>
+                    <p>${raster.description}</p>
+                `;
+                return div;
+            };
+            legend.addTo(map);
+        });
+
+        // Fit map to first raster bounds if available
+        if (rasterData.length > 0) {
+            var bounds = L.latLngBounds([
+                [rasterData[0].bounds[1], rasterData[0].bounds[0]],
+                [rasterData[0].bounds[3], rasterData[0].bounds[2]]
+            ]);
+            map.fitBounds(bounds);
+        }

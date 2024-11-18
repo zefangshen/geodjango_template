@@ -1,0 +1,91 @@
+{% extends 'visualisation/base.html' %}
+
+{% block extra_css %}
+  #map {
+    height: 600px;
+    width: 80%;
+    border: 1px solid #ccc;
+  }
+  .legend {
+    line-height: 18px;
+    color: #555;
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  }
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1>Leaflet Map</h1>
+  <div id="map"></div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Parse the raster data
+    // var mapCenter = [54.5, -2.5];
+    var mapCenter = [-25.2744, 133.7751];
+    // var mapCenter = {{ center|safe }};
+    var mapZoom = 4;
+    var bounds = {{ bounds|safe }};
+    var name = "{{ name|safe }}";
+    var tile_url = "{{ tile_url|safe }}";
+
+    // console.log(imageData);
+    // console.log(name);
+    // console.log(tile_url);
+    console.log(bounds);
+
+    // Initialize the map
+    var map = L.map('map').setView(mapCenter, mapZoom);
+
+    // Add OpenStreetMap base layer
+    var openstreetmap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // google satellite
+    var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+      maxZoom: 19
+    }).addTo(map);
+
+    var bounds = L.latLngBounds([
+      [bounds[1], bounds[0]],
+      [bounds[3], bounds[2]]
+    ]);
+    // Add our raster layer
+    // var rasterLayer = L.tileLayer('{{ tile_url }}', {
+    //   attribution: "{{ name }}",
+    //   opacity: 0.8,
+    //   bounds: bounds,
+    //   noWrap: true,
+    //   maxZoom: 20,    // Limit maximum zoom level
+    //   minZoom: 1,     // Limit minimum zoom level
+    //   continuousWorld: false,  // Prevent wrapping at 180th meridian
+    //   worldCopyJump: false     // Prevent world copies when panning
+    // }).addTo(map);
+
+    var baseMaps = {
+      "Satellite": satellite,
+      "Terrain": openstreetmap
+    };
+
+    // var overlayMaps = {
+    //   "{{ name }}": rasterLayer
+    // };
+
+    // L.control.layers(baseMaps, overlayMaps).addTo(map);
+    L.control.layers(baseMaps).addTo(map);
+
+    // Zoom to fit the raster bounds
+    // map.fitBounds(bounds);
+
+    // Restrict the map view to a reasonable area around the raster
+    // map.setMaxBounds(bounds.pad(0.5));  // Add 50% padding around the bounds
+
+  });
+</script>
+{% endblock %}

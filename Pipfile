@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+psycopg2-binary = "*"
+geopandas = "*"
+ipykernel = "*"
+ipdb = "*"
+matplotlib = "*"
+rioxarray = "*"
+rasterio = "*"
+python-decouple = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"
+python_full_version = "3.12.7"
